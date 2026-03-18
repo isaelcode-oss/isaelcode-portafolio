@@ -142,34 +142,17 @@ function NeuralTitle({ text }) {
 export default function Hero() {
   return (
     <section id="hero" className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      <div className="absolute inset-0 grid-bg opacity-100 pointer-events-none" />
-
-      {/* Aurora burst — like the light rays in the logo */}
+      {/* Hero glow — centred aurora */}
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
           background: `
-            radial-gradient(ellipse 60% 40% at 55% 48%, rgba(0,229,255,0.07) 0%, transparent 60%),
-            radial-gradient(ellipse 40% 30% at 48% 50%, rgba(157,0,255,0.08) 0%, transparent 55%),
-            radial-gradient(ellipse 35% 25% at 60% 52%, rgba(0,255,133,0.05) 0%, transparent 50%),
-            radial-gradient(ellipse at center, transparent 25%, #050d18 85%)
+            radial-gradient(ellipse 80% 55% at 50% 45%, rgba(0,229,255,0.06) 0%, transparent 65%),
+            radial-gradient(ellipse 50% 35% at 30% 60%, rgba(157,0,255,0.07) 0%, transparent 55%),
+            radial-gradient(ellipse 40% 30% at 70% 35%, rgba(0,255,133,0.05) 0%, transparent 50%)
           `,
         }}
       />
-
-      {/* Floating code snippets — like in the logo background */}
-      {CODE_FLOATS.map((c, i) => (
-        <motion.div
-          key={i}
-          className="absolute code-float hidden md:block"
-          style={{ top: c.top, left: c.left, right: c.right }}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 2 + i * 0.15, duration: 1.2 }}
-        >
-          {c.text}
-        </motion.div>
-      ))}
 
       <div className="relative z-10 text-center px-6 max-w-5xl mx-auto pt-24">
 
