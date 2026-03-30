@@ -40,7 +40,7 @@ export default function About() {
             </h2>
 
             <p className="text-white/55 text-lg leading-relaxed mb-5">
-              Soy <strong className="text-white/85">Israel Patiño</strong>, Full-Stack Developer
+              Soy <strong className="text-white/85">Isael Patiño</strong>, Full-Stack Developer
               con enfoque en plataformas de alta concurrencia,
               ERPs personalizados y herramientas de automatización.
               Basado en <strong className="text-white/80">República Dominicana</strong>,

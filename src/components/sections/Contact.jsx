@@ -182,7 +182,7 @@ export default function Contact() {
               y{' '}
               <span style={{ color: '#00FF85' }}>pasión</span>"
             </p>
-            <p className="text-white/25 text-xs mt-2 tracking-widest">— Israel Patiño</p>
+            <p className="text-white/25 text-xs mt-2 tracking-widest">— Isael Patiño</p>
           </div>
           <p className="text-white/15 text-xs tracking-[0.2em]">
             © 2025 isaelcode.dev · Construido con React + Three.js 🇩🇴
