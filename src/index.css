@@ -19,6 +19,24 @@ body {
   overflow-x: hidden;
 }
 
+.site-shell { transition: opacity 500ms ease, transform 500ms ease; }
+.site-shell--booting { opacity: 0; transform: scale(0.99); height: 100vh; overflow: hidden; }
+.boot-screen { align-items: center; background: #02070d; display: flex; flex-direction: column; inset: 0; justify-content: center; padding: 24px; position: fixed; z-index: 2000; }
+.boot-terminal { background: #050d18; border: 1px solid rgba(0,229,255,.25); border-radius: 14px; box-shadow: 0 30px 100px rgba(0,0,0,.6), 0 0 50px rgba(0,229,255,.08); max-width: 680px; overflow: hidden; width: 100%; }
+.boot-titlebar { align-items: center; background: #0b1622; border-bottom: 1px solid rgba(255,255,255,.08); display: flex; gap: 8px; padding: 12px 16px; }
+.boot-titlebar span { background: #ff5f57; border-radius: 50%; height: 10px; width: 10px; }
+.boot-titlebar span:nth-child(2) { background: #febc2e; }
+.boot-titlebar span:nth-child(3) { background: #28c840; }
+.boot-titlebar strong { color: rgba(255,255,255,.35); flex: 1; font: 500 12px monospace; text-align: center; }
+.boot-content { min-height: 260px; padding: 28px; }
+.boot-content p { font: 14px/1.9 monospace; }
+.boot-cursor { animation: boot-blink .7s steps(1) infinite; color: #00e5ff; font-family: monospace; }
+.boot-progress { background: rgba(255,255,255,.06); height: 3px; }
+.boot-progress span { background: linear-gradient(90deg,#9d00ff,#00e5ff,#00ff85); display: block; height: 100%; }
+.boot-skip { color: rgba(255,255,255,.55); font-size: 12px; margin-top: 20px; padding: 10px 14px; }
+.boot-skip:hover { color: #fff; }
+@keyframes boot-blink { 50% { opacity: 0; } }
+
 a:focus-visible,
 button:focus-visible,
 input:focus-visible,
