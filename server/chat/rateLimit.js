@@ -52,10 +52,20 @@ export class SlidingWindowLimiter {
   }
 }
 
-// La cabecera x-real-ip la fija el borde de Vercel, que es el proxy real;
-// no se acepta X-Forwarded-For porque el cliente puede inyectarla.
+// isaelcode.dev pasa por Cloudflare antes de llegar a Vercel, así que la IP
+// del visitante viene en cf-connecting-ip; x-real-ip la fija Vercel y, detrás
+// de Cloudflare, suele ser la IP del propio borde. Nunca se lee
+// X-Forwarded-For: el cliente puede inyectarla. Quien llegue directo al origen
+// *.vercel.app puede fabricar cf-connecting-ip; eso lo cierra restringir el
+// origen a Cloudflare, no este código (ver AGENTS.md). Se devuelve el origen
+// de la clave para que los logs muestren qué cabecera se usó.
+function plausibleIp(value) {
+  return typeof value === 'string' && value.length > 0 && value.length < 64
+}
+
 export function clientKey(headers) {
-  const real = headers['x-real-ip']
-  if (typeof real === 'string' && real.length > 0 && real.length < 64) return real
-  return 'unknown'
+  if (plausibleIp(headers['cf-connecting-ip'])) return { value: headers['cf-connecting-ip'], source: 'cloudflare' }
+  if (plausibleIp(headers['x-real-ip'])) return { value: headers['x-real-ip'], source: 'vercel' }
+  // Todo el tráfico sin cabecera comparte una cuota: falla cerrado y queda visible en los logs.
+  return { value: 'unknown', source: 'unknown' }
 }

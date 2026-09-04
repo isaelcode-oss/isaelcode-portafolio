@@ -43,9 +43,10 @@ test('las peticiones rechazadas no consumen cuota', () => {
   assert.equal(limiter.check('a').allowed, true)
 })
 
-test('la clave de cliente solo confía en x-real-ip, nunca en x-forwarded-for', () => {
-  assert.equal(clientKey({ 'x-real-ip': '203.0.113.9', 'x-forwarded-for': '1.1.1.1' }), '203.0.113.9')
-  assert.equal(clientKey({ 'x-forwarded-for': '1.1.1.1' }), 'unknown')
-  assert.equal(clientKey({}), 'unknown')
-  assert.equal(clientKey({ 'x-real-ip': 'x'.repeat(200) }), 'unknown')
+test('la clave de cliente prefiere cf-connecting-ip, luego x-real-ip, y nunca x-forwarded-for', () => {
+  assert.deepEqual(clientKey({ 'cf-connecting-ip': '198.51.100.7', 'x-real-ip': '203.0.113.9', 'x-forwarded-for': '1.1.1.1' }), { value: '198.51.100.7', source: 'cloudflare' })
+  assert.deepEqual(clientKey({ 'x-real-ip': '203.0.113.9', 'x-forwarded-for': '1.1.1.1' }), { value: '203.0.113.9', source: 'vercel' })
+  assert.deepEqual(clientKey({ 'x-forwarded-for': '1.1.1.1' }), { value: 'unknown', source: 'unknown' })
+  assert.deepEqual(clientKey({}), { value: 'unknown', source: 'unknown' })
+  assert.deepEqual(clientKey({ 'x-real-ip': 'x'.repeat(200) }), { value: 'unknown', source: 'unknown' })
 })

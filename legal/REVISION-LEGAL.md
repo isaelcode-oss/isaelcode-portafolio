@@ -13,3 +13,4 @@ Actualización 2026-09-04 — asistente de chat con IA:
 - [REVISAR CON ABOGADO] Plazo de retención de Anthropic para peticiones de API (30 días en su configuración estándar) y si debe citarse literalmente en la política.
 - [REVISAR CON ABOGADO] Validar el descargo de responsabilidad del asistente automático en los términos: alcance de "orientativo" y exclusión de oferta.
 - Control implementado: la web no persiste el contenido de la conversación; los registros del servidor no incluyen el texto. Anotado en AGENTS.md.
+- [REVISAR CON ABOGADO] Tratamiento de la dirección IP como clave del limitador de abuso del asistente: base legal declarada como interés legítimo; confirmar redacción y retención en Vercel/Cloudflare.

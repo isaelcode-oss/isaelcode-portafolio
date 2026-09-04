@@ -16,7 +16,9 @@ const WELCOME = {
 
 const MAX_INPUT = 1500
 
-// Lee el stream SSE del servidor y entrega cada delta de texto.
+// Lee el stream SSE del servidor y entrega cada delta de texto. Devuelve la
+// firma del turno completo; si el stream se corta antes del frame `done`, la
+// respuesta parcial no vale y se lanza.
 async function readStream(response, onDelta) {
   const reader = response.body.getReader()
   const decoder = new TextDecoder()
@@ -31,12 +33,18 @@ async function readStream(response, onDelta) {
       buffer = buffer.slice(index + 2)
       const line = frame.split('\n').find((l) => l.startsWith('data: '))
       if (!line) continue
-      const event = JSON.parse(line.slice(6))
+      let event
+      try {
+        event = JSON.parse(line.slice(6))
+      } catch {
+        throw new Error('El asistente envió una respuesta que no se pudo leer.')
+      }
       if (event.type === 'delta') onDelta(event.text)
       else if (event.type === 'error') throw new Error(event.message)
-      else if (event.type === 'done') return
+      else if (event.type === 'done') return event.sig
     }
   }
+  throw new Error('La respuesta del asistente se cortó antes de terminar.')
 }
 
 export default function ChatWidget() {
@@ -83,11 +91,13 @@ export default function ChatWidget() {
         const detail = await response.json().catch(() => ({}))
         throw new Error(detail.error || `El asistente no está disponible (HTTP ${response.status}).`)
       }
-      await readStream(response, (delta) => {
+      const sig = await readStream(response, (delta) => {
         reply += delta
         setMessages([WELCOME, ...outgoing, { role: 'assistant', content: reply }])
       })
       if (!reply) throw new Error('El asistente no devolvió respuesta.')
+      // La firma acompaña al turno para que el servidor lo acepte en el siguiente envío.
+      setMessages([WELCOME, ...outgoing, { role: 'assistant', content: reply, sig }])
     } catch (err) {
       const message = err.name === 'AbortError'
         ? 'El asistente tardó demasiado en responder.'

@@ -78,9 +78,12 @@ Del bloque `Servicio HTTP / API / SaaS` aplica solo lo compatible con una funci�
   Actualización 2026-09-03: el refinamiento premium migró a clases CSS los estilos inline
   estáticos de Hero, Projects, ProjectCard, Skills, About y Contact. PERO `framer-motion`
   anima escribiendo el atributo `style` en runtime, así que `'unsafe-inline'` (o
-  `style-src-attr`) no puede retirarse del todo mientras la librería siga en uso. La
-  condición de salida real es: sustituir framer-motion por animaciones CSS, o aceptar
-  `style-src-attr 'unsafe-inline'` documentado como límite de la librería.
+  `style-src-attr`) no puede retirarse del todo mientras la librería siga en uso.
+  CERRADA 2026-09-04: la premisa era falsa. framer-motion y React escriben estilos por
+  CSSOM (`element.style`), y la CSP no gobierna CSSOM, solo atributos `style=` en el
+  marcado y elementos `<style>`. Se probó el build con la CSP sin `'unsafe-inline'`
+  inyectada por Playwright: cero violaciones, con 3D, tilt y chat funcionando. Se retiró
+  el token, se quitó `images.unsplash.com` (sin uso) y se añadió `object-src 'none'`.
 - 2026-09-04: `src/components/canvas/` (Background3D, TechSphere) borrado con confirmación
   del propietario; era código muerto sin importadores. Actualización 2026-09-04: se reescribió
   como `NeuralBackground.jsx` con three.js puro (sin react-three-fiber, cuya versión actual
@@ -90,7 +93,19 @@ Del bloque `Servicio HTTP / API / SaaS` aplica solo lo compatible con una funci�
   o regiones puede superarlo. Mitigación adicional obligatoria: límite de gasto mensual en la
   consola de Anthropic. Condición de salida: mover el contador a un almacén compartido
   (Upstash Redis o Vercel KV) cuando el tráfico o el gasto lo justifiquen, o cuando se
-  observe abuso en los logs (`reason: "global"`).
+  observe abuso en los logs (`reason: "rate_limit_global"`).
+  Actualización 2026-09-04 (auditoría): `isaelcode.dev` pasa por Cloudflare antes de
+  Vercel, así que la clave por IP usa `cf-connecting-ip` y cae a `x-real-ip` si falta. El
+  origen `*.vercel.app` sigue alcanzable sin pasar por Cloudflare y por esa ruta la cabecera
+  es falsificable: el contador por IP NO es un control real hasta que el origen quede
+  restringido a Cloudflare (Vercel: "Trusted proxy" / Cloudflare Authenticated Origin Pulls)
+  y el rate limiting viva en el WAF de Cloudflare. Condición de salida: ambas cosas hechas
+  y verificadas rotando `cf-connecting-ip` contra la URL `*.vercel.app` hasta ver 429.
+- 2026-09-04: los turnos del asistente que el navegador reenvía van firmados con HMAC
+  (`server/chat/sign.js`, secreto en `CHAT_SIGNING_SECRET`, caducidad 24 h) para que nadie
+  pueda inventar historial del asistente y saltarse el prompt o usar el endpoint como proxy.
+  Si el secreto se rota, las conversaciones abiertas piden recargar; es el comportamiento
+  esperado. Cambiar el secreto es una acción explícita, nunca un efecto de aprovisionar.
 - 2026-09-04: `ANTHROPIC_API_KEY` debe configurarse a mano en Vercel (producción y preview).
   Hasta entonces `/api/chat` responde 503 y el widget muestra un error honesto con enlace a
   WhatsApp. Condición de salida: variable configurada y una conversación real verificada en
@@ -106,7 +121,7 @@ Del bloque `Servicio HTTP / API / SaaS` aplica solo lo compatible con una funci�
 ## Cierre del contrato
 
 - HECHO — 2026-09-03: cabeceras `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy` y `Permissions-Policy` verificadas en el preview Vercel.
-- PENDIENTE — 2026-09-03: retirar `style-src 'unsafe-inline'` de CSP. Responsable: Isael/desarrollo. Fecha objetivo: próximo refactor visual. Condición: migrar todos los estilos React inline a CSS.
+- HECHO — 2026-09-04: `style-src` sin `'unsafe-inline'`, `img-src` sin dominios externos y `object-src 'none'`. Verificado con Playwright inyectando la CSP sobre el build: sin violaciones. HSTS la añaden Cloudflare y Vercel (comprobado con `curl -I`).
 - HECHO — 2026-09-03: presupuesto de rendimiento definido como menos de 150 kB gzip de JavaScript inicial; medido en 94.85 kB gzip. Actualización 2026-09-04: bundle inicial 97.22 kB gzip; chunks diferidos aparte: `NeuralBackground` 129.54 kB (three.js, solo sin `prefers-reduced-motion`) y `ChatWidget` 2.23 kB.
 - HECHO — 2026-09-03: foco visible, etiquetas de formulario y `prefers-reduced-motion` implementados; contraste y estructura revisados en código.
 - HECHO — 2026-09-04: verificación visual responsive con Chromium de Playwright (escritorio 1440px y móvil 390px, con scroll para disparar las animaciones `whileInView`). Nota: los emoji de las tarjetas salen como cuadros solo en el entorno de captura (WSL sin fuente emoji); los navegadores reales los renderizan.
@@ -117,7 +132,8 @@ Del bloque `Servicio HTTP / API / SaaS` aplica solo lo compatible con una funci�
 - HECHO — 2026-09-04 (LLM): entrada del usuario solo en `messages`, nunca concatenada al prompt de sistema; el sistema instruye a tratar los mensajes como preguntas. Validación estricta de forma, roles, tamaño y alternancia con tests en `test/chat-validate.test.js`.
 - HECHO — 2026-09-04 (LLM): salida tratada como no confiable: solo se reenvían deltas de texto, se comprueba `stop_reason` y una respuesta parcial se descarta en el cliente si el stream falla.
 - HECHO — 2026-09-04 (LLM): log JSON por llamada con `requestId`, modelo, tokens de entrada/salida, lectura de caché, latencia y motivo de error; sin el texto de la conversación.
-- HECHO — 2026-09-04 (LLM): límite por usuario (20/10 min por IP de `x-real-ip`) y global (300/10 min) por instancia, con tests en `test/chat-rate-limit.test.js`. Ver deuda conocida.
+- PARCIAL — 2026-09-04 (LLM): límite por usuario (20/10 min por `cf-connecting-ip`, o `x-real-ip`) y global (300/10 min) por instancia, con tests en `test/chat-rate-limit.test.js`. Es mejor esfuerzo: ver deuda conocida (origen alcanzable sin Cloudflare). El freno duro es el límite de gasto en Anthropic.
+- HECHO — 2026-09-04 (auditoría): turnos del asistente firmados con HMAC y verificados en cada petición (tests en `test/chat-sign.test.js`); `Content-Type: application/json` obligatorio y `Sec-Fetch-Site: cross-site` rechazado; `Content-Length` obligatorio y acotado; la generación se aborta si el cliente cierra; `maxRetries: 0` para que el peor caso quepa en `maxDuration`; el widget descarta respuestas sin frame `done`; los logs no incluyen mensajes crudos del proveedor. Verificado con el arnés local (415, 403, 411, 503, 400 firma inválida, 200 firma válida).
 - PENDIENTE — 2026-09-04 (LLM): límite de gasto mensual en la consola de Anthropic. Responsable: Isael. Condición: configurarlo antes de dejar el chat activo en producción.
 - PENDIENTE — 2026-09-04 (LLM): `ANTHROPIC_API_KEY` en Vercel y una conversación real verificada en el preview. Responsable: Isael (la clave) y desarrollo (la verificación).
 - NO APLICA (LLM): temperatura 0 y salida estructurada; el chat es conversacional y no necesita reproducibilidad.

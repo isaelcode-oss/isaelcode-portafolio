@@ -8,6 +8,7 @@ export const LIMITS = Object.freeze({
 })
 
 const ROLES = new Set(['user', 'assistant'])
+const MAX_SIG_LENGTH = 120
 // Caracteres de control salvo salto de línea (\n) y tabulación (\t).
 const CONTROL_CHARS = /[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g
 
@@ -55,7 +56,14 @@ export function validateChatBody(body) {
       throw new ValidationError(`El mensaje ${index} está vacío.`)
     }
     total += content.length
-    return { role: entry.role, content }
+    if (entry.role === 'assistant') {
+      // La firma la verifica el handler con el secreto; aquí solo se acota su forma.
+      if (typeof entry.sig !== 'string' || entry.sig.length === 0 || entry.sig.length > MAX_SIG_LENGTH) {
+        throw new ValidationError(`El mensaje ${index} del asistente no está firmado.`)
+      }
+      return { role: 'assistant', content, sig: entry.sig }
+    }
+    return { role: 'user', content }
   })
 
   if (total > LIMITS.maxTotalChars) {
