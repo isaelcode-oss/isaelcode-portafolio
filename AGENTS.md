@@ -43,6 +43,10 @@ Aplica el bloque `Frontend web / landing / PWA` de `~/.ai/templates/CONTRATOS.md
   `babyblack996` o migrados a `isaelcode-oss`.
 - 2026-09-03: se retiran `WalletConnect` y `USDT TRC20` de la nube de integraciones; no
   respaldan la propuesta empresarial y no hay proyecto visible que los demuestre.
+- 2026-09-04: reparto de remotos decidido por el propietario — `isaelcode-oss` es la
+  organización PÚBLICA (lo que ve el mundo y lo que despliega); `babyblack996` es la cuenta
+  personal donde viven todos los proyectos. Este repo se empuja a ambos: `isaelcode` como
+  fuente de verdad pública y `origin` como copia personal.
 
 ## Deuda conocida
 
