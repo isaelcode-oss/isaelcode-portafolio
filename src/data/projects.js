@@ -7,6 +7,7 @@ export const projects = [
     stack: ['Python', 'Flask', 'PostgreSQL', 'Twilio', 'Tesseract OCR', 'Google Drive API'],
     category: 'ERP / Backend',
     icon: '🚚',
+    color: '#00e5ff',
     features: ['Flujo de facturación', 'Módulo de nómina', 'WhatsApp Bot OCR', 'Reportes operativos'],
   },
   {
@@ -17,6 +18,7 @@ export const projects = [
     stack: ['React', 'Node.js', 'PostgreSQL', 'Redis', 'AWS S3 / MinIO', 'Socket.IO', 'JWT'],
     category: 'Cloud Platform',
     icon: '☁️',
+    color: '#9d00ff',
     features: ['Upload S3 directo', 'Real-time Socket.IO', 'OAuth Google/Microsoft/Apple', 'Audit Logs completos'],
   },
   {
@@ -27,6 +29,7 @@ export const projects = [
     stack: ['Node.js 24', 'TypeScript', 'PostgreSQL', 'Docker', 'Zod'],
     category: 'Data Pipeline',
     icon: '📈',
+    color: '#00ff85',
     features: ['Defensa SSRF por salto', 'Respeta robots.txt siempre', 'Precios en enteros exactos', 'Entrega al-menos-una-vez'],
   },
 ]
