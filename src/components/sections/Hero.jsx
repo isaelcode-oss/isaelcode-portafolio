@@ -1,9 +1,30 @@
-import { motion } from 'framer-motion'
+import { useEffect, useRef, useState } from 'react'
+import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion'
 import { DEFAULT_WHATSAPP_URL } from '../../config/site.js'
+import { useReducedMotion } from '../../hooks/useReducedMotion.js'
 
-const ROLES = ['Software empresarial', 'Automatización de procesos', 'IA aplicada a operaciones']
+const ROLES = [
+  'Software empresarial que opera de verdad',
+  'Automatización que elimina trabajo manual',
+  'IA aplicada con resultados medibles',
+  'Integraciones entre tus sistemas',
+]
 
 const STACK_TAGS = ['Node.js', 'Python', 'React', 'TypeScript', 'PostgreSQL', 'Docker', 'AWS S3']
+
+// Fragmentos de código flotando en los bordes, como en el logo.
+const CODE_FLOATS = [
+  { text: 'class Empresa {',        top: '10%', left: '3%',  delay: 0 },
+  { text: '  automatizar(proceso)', top: '17%', left: '2%',  delay: 0.4 },
+  { text: '  return resultado',     top: '24%', left: '4%',  delay: 0.8 },
+  { text: 'await integrar(erp)',    top: '74%', left: '2%',  delay: 1.2 },
+  { text: '</div>',                 top: '82%', left: '5%',  delay: 1.6 },
+  { text: 'const ia = new Agente()', top: '11%', right: '2%', delay: 0.2 },
+  { text: '  ia.clasificar(docs)',  top: '18%', right: '1%', delay: 0.6 },
+  { text: '  ia.responder()',       top: '25%', right: '3%', delay: 1.0 },
+  { text: 'queue.process(job)',     top: '76%', right: '2%', delay: 1.4 },
+  { text: 'deploy --prod',          top: '84%', right: '4%', delay: 1.8 },
+]
 
 const WhatsAppIcon = () => (
   <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
@@ -11,14 +32,129 @@ const WhatsAppIcon = () => (
   </svg>
 )
 
+function TypeWriter({ texts, enabled }) {
+  const [idx, setIdx] = useState(0)
+  const [text, setText] = useState(enabled ? '' : texts[0])
+  const [deleting, setDeleting] = useState(false)
+
+  useEffect(() => {
+    if (!enabled) return undefined
+    const full = texts[idx]
+    let timer
+    if (!deleting) {
+      if (text.length < full.length) {
+        timer = setTimeout(() => setText(full.slice(0, text.length + 1)), 55)
+      } else {
+        timer = setTimeout(() => setDeleting(true), 2400)
+      }
+    } else if (text.length > 0) {
+      timer = setTimeout(() => setText(text.slice(0, -1)), 28)
+    } else {
+      setDeleting(false)
+      setIdx((i) => (i + 1) % texts.length)
+    }
+    return () => clearTimeout(timer)
+  }, [text, deleting, idx, texts, enabled])
+
+  return (
+    <span className="typewriter" aria-live="polite">
+      {text}
+      {enabled && <span className="typewriter__cursor" aria-hidden="true">|</span>}
+    </span>
+  )
+}
+
+// Una letra que se desplaza con el mouse según su profundidad
+function NeuralLetter({ char, depth, index, mouseX, mouseY, green }) {
+  const tx = useTransform(mouseX, [-1, 1], [-depth * 20, depth * 20])
+  const ty = useTransform(mouseY, [-1, 1], [-depth * 12, depth * 12])
+  const sx = useSpring(tx, { stiffness: 90 - index * 2, damping: 18 })
+  const sy = useSpring(ty, { stiffness: 90 - index * 2, damping: 18 })
+
+  return (
+    <motion.span
+      style={{ x: sx, y: sy }}
+      className={`neural-letter ${green ? 'neural-letter--green' : ''}`}
+      initial={{ opacity: 0, y: 60, rotateX: -40 }}
+      animate={{ opacity: 1, y: 0, rotateX: 0 }}
+      transition={{ duration: 0.9, delay: 0.25 + index * 0.06, ease: [0.16, 1, 0.3, 1] }}
+      whileHover={{ scale: 1.15, transition: { duration: 0.15 } }}
+    >
+      {char}
+    </motion.span>
+  )
+}
+
+function NeuralTitle({ text, interactive }) {
+  const ref = useRef(null)
+  const mouseX = useMotionValue(0)
+  const mouseY = useMotionValue(0)
+
+  const handleMouse = (event) => {
+    const rect = ref.current?.getBoundingClientRect()
+    if (!rect) return
+    mouseX.set(((event.clientX - rect.left) / rect.width - 0.5) * 2)
+    mouseY.set(((event.clientY - rect.top) / rect.height - 0.5) * 2)
+  }
+  const handleLeave = () => { mouseX.set(0); mouseY.set(0) }
+
+  if (!interactive) {
+    return (
+      <h1 className="hero-title">
+        isaelcode<span className="hero-title__dev">.dev</span>
+      </h1>
+    )
+  }
+
+  const chars = text.split('')
+  const devStart = text.length - 4
+  return (
+    <h1
+      ref={ref}
+      onMouseMove={handleMouse}
+      onMouseLeave={handleLeave}
+      className="hero-title hero-title--neural"
+      aria-label={text}
+    >
+      {chars.map((char, i) => (
+        <NeuralLetter
+          key={i}
+          char={char}
+          depth={0.4 + (i % 3) * 0.32}
+          index={i}
+          mouseX={mouseX}
+          mouseY={mouseY}
+          green={i >= devStart}
+        />
+      ))}
+    </h1>
+  )
+}
+
 export default function Hero() {
+  const reduced = useReducedMotion()
+
   return (
     <section id="hero" className="relative min-h-screen flex items-center justify-center overflow-hidden">
       <div className="absolute inset-0 hero-aurora pointer-events-none" />
+      <div className="absolute inset-0 hero-rays pointer-events-none" aria-hidden="true" />
+
+      {!reduced && CODE_FLOATS.map((c) => (
+        <motion.div
+          key={c.text + c.top}
+          className="code-float hidden md:block"
+          style={{ top: c.top, left: c.left, right: c.right }}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: [0, 1, 1, 0.55, 1], y: [10, 0, -6, 0, -4] }}
+          transition={{ delay: 1.6 + c.delay, duration: 9, repeat: Infinity, repeatType: 'mirror', ease: 'easeInOut' }}
+          aria-hidden="true"
+        >
+          {c.text}
+        </motion.div>
+      ))}
 
       <div className="relative z-10 text-center px-6 max-w-5xl mx-auto pt-24">
 
-        {/* Status badge */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -31,76 +167,67 @@ export default function Hero() {
           <span className="hero-badge__location text-sm">🇩🇴 República Dominicana</span>
         </motion.div>
 
-        {/* Brand mark */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
+          initial={{ opacity: 0, scale: 0.6, rotate: -8 }}
+          animate={{ opacity: 1, scale: 1, rotate: 0 }}
           transition={{ duration: 0.9, delay: 0.05, ease: [0.16, 1, 0.3, 1] }}
           className="mb-3 flex justify-center"
         >
-          <span className="brand-mark text-3xl md:text-4xl font-bold select-none">{'</>'}</span>
+          <span className="brand-mark brand-mark--glow text-3xl md:text-4xl font-bold select-none">{'</>'}</span>
         </motion.div>
 
-        {/* Title */}
-        <motion.h1
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
-          className="hero-title mb-6"
-        >
-          isaelcode<span className="hero-title__dev">.dev</span>
-        </motion.h1>
+        <div className="mb-5">
+          <NeuralTitle text="isaelcode.dev" interactive={!reduced} />
+        </div>
 
-        {/* Roles */}
         <motion.p
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.5 }}
+          transition={{ duration: 0.8, delay: 1 }}
           className="hero-roles mb-5"
         >
-          {ROLES.join('  ·  ')}
+          <TypeWriter texts={ROLES} enabled={!reduced} />
         </motion.p>
 
-        {/* Tagline */}
         <motion.p
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.65 }}
-          className="text-white/40 text-lg leading-relaxed mb-10 max-w-xl mx-auto"
+          transition={{ duration: 0.8, delay: 1.1 }}
+          className="text-white/45 text-lg leading-relaxed mb-10 max-w-xl mx-auto"
         >
           Diseño software, automatizaciones y soluciones de IA para empresas que necesitan
           operar mejor, conectar sus sistemas y eliminar trabajo manual.
         </motion.p>
 
-        {/* CTAs */}
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.8 }}
+          transition={{ duration: 0.8, delay: 1.2 }}
           className="flex flex-col sm:flex-row gap-3 justify-center items-center mb-12"
         >
-          <a href="#contact" className="cta cta--primary">
+          <motion.a href="#contact" className="cta cta--primary cta--shine" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.97 }}>
             AGENDAR DIAGNÓSTICO
-          </a>
-          <a
+          </motion.a>
+          <motion.a
             href={DEFAULT_WHATSAPP_URL}
             target="_blank"
             rel="noopener noreferrer"
             className="cta cta--whatsapp"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.97 }}
           >
             <WhatsAppIcon />
             HABLAR POR WHATSAPP
-          </a>
-          <a href="#projects" className="cta cta--ghost glass">
+          </motion.a>
+          <motion.a href="#projects" className="cta cta--ghost glass" whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}>
             VER TRABAJO →
-          </a>
+          </motion.a>
         </motion.div>
 
-        {/* Stack tags */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 1.2, delay: 1 }}
+          transition={{ duration: 1.2, delay: 1.4 }}
           className="flex flex-wrap gap-2 justify-center"
         >
           {STACK_TAGS.map((tag, i) => (
@@ -108,7 +235,8 @@ export default function Hero() {
               key={tag}
               initial={{ opacity: 0, scale: 0.7 }}
               animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 1 + i * 0.06 }}
+              transition={{ delay: 1.4 + i * 0.06 }}
+              whileHover={{ scale: 1.08, color: '#00e5ff', borderColor: 'rgba(0,229,255,0.5)' }}
               className="stack-tag glass rounded-full px-3 py-1.5 text-xs"
             >
               {tag}
@@ -117,11 +245,10 @@ export default function Hero() {
         </motion.div>
       </div>
 
-      {/* Scroll cue */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 1.8 }}
+        transition={{ delay: 2.2 }}
         className="absolute bottom-10 left-1/2 -translate-x-1/2 hidden sm:flex flex-col items-center gap-2"
       >
         <span className="text-white/20 text-xs tracking-[0.3em]">SCROLL</span>
