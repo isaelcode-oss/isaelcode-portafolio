@@ -4,12 +4,15 @@
 - [x] Audiencia: empresas de República Dominicana y Latinoamérica que necesitan software, automatización o IA aplicada.
 - [x] Incluye: propuesta de valor, servicios, proceso, proyectos demostrativos, perfil profesional, stack y contacto real.
 - [x] Incluye: SEO básico, metadatos sociales, sitemap, robots, seguridad HTTP, accesibilidad y documentos legales en borrador.
+- [x] Incluye: experiencia visual de alto impacto (fondo 3D, parallax, typewriter, tilt) que se desactiva con `prefers-reduced-motion`.
+- [x] Incluye: asistente de chat con IA (Anthropic) vía `/api/chat`, sin persistencia propia de conversaciones, con límites de tasa y de tamaño.
 - [x] Contacto principal: WhatsApp +1 849-594-7884.
 - [x] Contacto alternativo: info@isaelcode.dev.
 - [x] Formulario: prepara un mensaje y abre WhatsApp; no persiste ni transmite datos a un backend propio.
 - [x] No incluye: cobros, autenticación, cuentas, base de datos, analítica, cookies de seguimiento ni integración con proveedor de email.
+- [x] No incluye: historial de chat persistente ni captura de datos del visitante por el asistente.
 - [x] No incluye: afirmaciones de clientes, usuarios, producción o resultados no verificadas.
 - [x] Despliegue: preview Vercel antes de producción.
 - [x] Fuente de verdad: GitHub `babyblack996/isaelcode-portafolio`, rama de producción `master`.
-- [x] Verificación: build, inspección de enlaces, headers, responsive y contenido desplegado.
+- [x] Verificación: build, tests, inspección de enlaces, headers, responsive, contenido desplegado y una conversación real del asistente en el preview.
 - [x] Aprobación necesaria: promover a producción solo después de verificar el preview.

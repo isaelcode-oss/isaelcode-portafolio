@@ -2,17 +2,21 @@
 
 ## Clasificación
 
-- Tipo: frontend web / landing comercial.
-- Maneja dinero: no.
-- Maneja datos personales: sí; el visitante puede proporcionar nombre, correo y detalles de su proyecto al iniciar contacto.
+- Tipo: frontend web / landing comercial + un endpoint serverless (`/api/chat`) que integra un LLM.
+- Maneja dinero: no. El endpoint consume crédito de la API de Anthropic (costo por uso), no cobra.
+- Maneja datos personales: sí; el visitante puede proporcionar nombre, correo y detalles de su proyecto al iniciar contacto, y lo que escriba en el asistente de chat viaja a Anthropic.
 - Multi-tenant: no.
-- Exposición: pública mediante Cloudflare y Vercel.
+- Exposición: pública mediante Cloudflare y Vercel. `/api/chat` es público sin autenticación.
 - Escala esperada: cientos de visitantes.
 - Estado: código existente al que hay que adaptarse.
 
 ## Contrato aplicable
 
 Aplica el bloque `Frontend web / landing / PWA` de `~/.ai/templates/CONTRATOS.md` porque esta aplicación es una landing React/Vite pública. No es PWA. Debe incluir cabeceras de seguridad y CSP, presupuesto de rendimiento, accesibilidad por teclado/contraste/textos alternativos, consentimiento previo si se incorpora analítica y estados de carga/error veraces.
+
+Desde 2026-09-04 aplica también el bloque `Agente IA / integración LLM` por el asistente de chat (`api/chat.js`): timeout, límite de tokens, comportamiento definido si el proveedor falla, entrada del usuario delimitada, salida tratada como no confiable, registro de costo/latencia/error, y límite de gasto por usuario y global.
+
+Del bloque `Servicio HTTP / API / SaaS` aplica solo lo compatible con una función serverless en Vercel: validación en el borde, timeouts explícitos, logs JSON con `request-id`. NO APLICA `/health`, `/ready`, `/metrics`, apagado ordenado ni réplicas: Vercel gestiona el ciclo de vida del proceso y no hay base de datos, cola ni caché propias. Si el chat pasa a un servicio propio, ese bloque aplica completo.
 
 ## Herramientas y servicios
 
@@ -22,6 +26,8 @@ Aplica el bloque `Frontend web / landing / PWA` de `~/.ai/templates/CONTRATOS.md
 - WhatsApp y correo bajo `isaelcode.dev`: canales de contacto reales sin introducir un procesador de formularios externo.
 - Cloudflare: borde público existente; no se cambia su configuración en este alcance.
 - Validación HTML del formulario: el contenido se codifica en el cliente y se entrega a WhatsApp; no se almacena en esta aplicación.
+- Anthropic (`@anthropic-ai/sdk`, modelo `claude-opus-5`): genera las respuestas del asistente de chat. Clave en `ANTHROPIC_API_KEY` en Vercel, nunca en el repo. Se eligió por ser el proveedor por defecto del stack y por `fallbacks: "default"`, que evita que un falso positivo del clasificador deje al visitante sin respuesta.
+- three.js: fondo neuronal 3D. Se carga en un chunk diferido con `import()` para no romper el presupuesto inicial.
 
 ## Decisiones reversibles
 
@@ -48,6 +54,17 @@ Aplica el bloque `Frontend web / landing / PWA` de `~/.ai/templates/CONTRATOS.md
   donde viven todos los proyectos, la conectada a Vercel y el **remoto PRINCIPAL de este
   repo**: la fuente de verdad es `origin` (babyblack996) y el despliegue sale de
   `origin/master`. `isaelcode` (isaelcode-oss) es el espejo público y se empuja después.
+- 2026-09-04: el propietario pidió revertir la dirección del "refinamiento premium": el sitio debe
+  envolver al visitante. Se recuperan y amplían los efectos: fondo neuronal 3D (three.js puro,
+  reactivo a mouse y scroll), título con parallax por letra, typewriter, código flotante, rayos
+  cónicos giratorios, halo que sigue al cursor, luces que se desplazan con el scroll y tilt 3D con
+  brillo en las tarjetas. Todo se desactiva con `prefers-reduced-motion` (hook
+  `useReducedMotion`), y el 3D baja nodos y densidad de píxeles en móvil.
+- 2026-09-04: asistente de chat con IA, elegido por el propietario frente a un asistente guiado
+  sin IA. Backend: `api/chat.js` (función Node en Vercel) con SSE. Cliente: `ChatWidget.jsx`
+  cargado en chunk diferido. La conversación vive solo en memoria del navegador; no se persiste
+  en ningún lado propio. Límites: 24 mensajes, 1500 caracteres por mensaje, 12000 en total,
+  500 tokens de salida, timeout 25 s, `effort: low` para latencia de chat.
 - 2026-09-04: el espejo `isaelcode-oss/isaelcode-portafolio` se hizo PÚBLICO por decisión del
   propietario. Antes se verificó que el historial completo no contiene `.env`, tokens ni claves.
   Con esto el fetch del espejo funciona con cualquier cuenta; el push sigue exigiendo la cuenta
@@ -65,15 +82,36 @@ Aplica el bloque `Frontend web / landing / PWA` de `~/.ai/templates/CONTRATOS.md
   condición de salida real es: sustituir framer-motion por animaciones CSS, o aceptar
   `style-src-attr 'unsafe-inline'` documentado como límite de la librería.
 - 2026-09-04: `src/components/canvas/` (Background3D, TechSphere) borrado con confirmación
-  del propietario; era código muerto sin importadores.
+  del propietario; era código muerto sin importadores. Actualización 2026-09-04: se reescribió
+  como `NeuralBackground.jsx` con three.js puro (sin react-three-fiber, cuya versión actual
+  exige React 19).
+- 2026-09-04: el rate limiting de `/api/chat` es en memoria, por instancia de la función
+  (20 por IP y 300 globales cada 10 minutos). Una ráfaga distribuida entre varias instancias
+  o regiones puede superarlo. Mitigación adicional obligatoria: límite de gasto mensual en la
+  consola de Anthropic. Condición de salida: mover el contador a un almacén compartido
+  (Upstash Redis o Vercel KV) cuando el tráfico o el gasto lo justifiquen, o cuando se
+  observe abuso en los logs (`reason: "global"`).
+- 2026-09-04: `ANTHROPIC_API_KEY` debe configurarse a mano en Vercel (producción y preview).
+  Hasta entonces `/api/chat` responde 503 y el widget muestra un error honesto con enlace a
+  WhatsApp. Condición de salida: variable configurada y una conversación real verificada en
+  el preview.
 
 ## Cierre del contrato
 
 - HECHO — 2026-09-03: cabeceras `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy` y `Permissions-Policy` verificadas en el preview Vercel.
 - PENDIENTE — 2026-09-03: retirar `style-src 'unsafe-inline'` de CSP. Responsable: Isael/desarrollo. Fecha objetivo: próximo refactor visual. Condición: migrar todos los estilos React inline a CSS.
-- HECHO — 2026-09-03: presupuesto de rendimiento definido como menos de 150 kB gzip de JavaScript inicial; medido en 94.85 kB gzip.
+- HECHO — 2026-09-03: presupuesto de rendimiento definido como menos de 150 kB gzip de JavaScript inicial; medido en 94.85 kB gzip. Actualización 2026-09-04: bundle inicial 97.22 kB gzip; chunks diferidos aparte: `NeuralBackground` 129.54 kB (three.js, solo sin `prefers-reduced-motion`) y `ChatWidget` 2.23 kB.
 - HECHO — 2026-09-03: foco visible, etiquetas de formulario y `prefers-reduced-motion` implementados; contraste y estructura revisados en código.
 - HECHO — 2026-09-04: verificación visual responsive con Chromium de Playwright (escritorio 1440px y móvil 390px, con scroll para disparar las animaciones `whileInView`). Nota: los emoji de las tarjetas salen como cuadros solo en el entorno de captura (WSL sin fuente emoji); los navegadores reales los renderizan.
 - NO APLICA: banner de cookies; la aplicación no carga analítica ni rastreadores propios.
 - HECHO — 2026-09-03: el formulario no simula éxito; abre WhatsApp y declara que la web no almacena los datos.
 - HECHO — 2026-09-03: documentos legales publicados como BORRADOR con cláusulas sensibles marcadas `[REVISAR CON ABOGADO]`.
+- HECHO — 2026-09-04 (LLM): timeout 25 s y `maxRetries: 1` en el cliente; `max_tokens` 500; si el proveedor falla el widget muestra el error y ofrece WhatsApp. Verificado con un arnés local que ejercita 405, 400, 413, 429 y 503.
+- HECHO — 2026-09-04 (LLM): entrada del usuario solo en `messages`, nunca concatenada al prompt de sistema; el sistema instruye a tratar los mensajes como preguntas. Validación estricta de forma, roles, tamaño y alternancia con tests en `test/chat-validate.test.js`.
+- HECHO — 2026-09-04 (LLM): salida tratada como no confiable: solo se reenvían deltas de texto, se comprueba `stop_reason` y una respuesta parcial se descarta en el cliente si el stream falla.
+- HECHO — 2026-09-04 (LLM): log JSON por llamada con `requestId`, modelo, tokens de entrada/salida, lectura de caché, latencia y motivo de error; sin el texto de la conversación.
+- HECHO — 2026-09-04 (LLM): límite por usuario (20/10 min por IP de `x-real-ip`) y global (300/10 min) por instancia, con tests en `test/chat-rate-limit.test.js`. Ver deuda conocida.
+- PENDIENTE — 2026-09-04 (LLM): límite de gasto mensual en la consola de Anthropic. Responsable: Isael. Condición: configurarlo antes de dejar el chat activo en producción.
+- PENDIENTE — 2026-09-04 (LLM): `ANTHROPIC_API_KEY` en Vercel y una conversación real verificada en el preview. Responsable: Isael (la clave) y desarrollo (la verificación).
+- NO APLICA (LLM): temperatura 0 y salida estructurada; el chat es conversacional y no necesita reproducibilidad.
+- HECHO — 2026-09-04: privacidad y términos actualizados con el asistente (Vercel y Anthropic como encargados, sin persistencia propia, descargo de respuestas orientativas) y anotados en `legal/REVISION-LEGAL.md`.
