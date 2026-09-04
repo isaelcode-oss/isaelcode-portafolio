@@ -58,7 +58,7 @@ export default function Skills() {
             <span className="gradient-text">técnico</span>
           </h2>
           <p className="text-white/45 max-w-xl mx-auto">
-            Tecnologías que uso en producción, respaldadas por proyectos reales.
+            Herramientas que utilizo para diseñar, construir y desplegar soluciones completas.
           </p>
         </motion.div>
 

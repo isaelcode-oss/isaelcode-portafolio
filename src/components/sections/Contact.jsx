@@ -1,22 +1,23 @@
 import { useState, useRef } from 'react'
 import { motion, useInView } from 'framer-motion'
+import { CONTACT, DEFAULT_WHATSAPP_URL, buildWhatsAppUrl } from '../../config/site.js'
 
 export default function Contact() {
   const [form, setForm]     = useState({ name: '', email: '', message: '' })
-  const [sending, setSending] = useState(false)
-  const [sent, setSent]     = useState(false)
-
   const ref    = useRef(null)
   const inView = useInView(ref, { once: true, amount: 0.2 })
 
   const update = (k) => (e) => setForm({ ...form, [k]: e.target.value })
 
-  const submit = async (e) => {
+  const submit = (e) => {
     e.preventDefault()
-    setSending(true)
-    await new Promise((r) => setTimeout(r, 1500))   // simulate network
-    setSent(true)
-    setSending(false)
+    const message = [
+      'Hola Isael, vi isaelcode.dev y quiero conversar sobre un proyecto.',
+      `Nombre: ${form.name.trim()}`,
+      `Email: ${form.email.trim()}`,
+      `Proyecto: ${form.message.trim()}`,
+    ].join('\n')
+    window.open(buildWhatsAppUrl(message), '_blank', 'noopener,noreferrer')
   }
 
   const inputCls =
@@ -25,10 +26,6 @@ export default function Contact() {
     background: 'rgba(255,255,255,0.04)',
     border: '1px solid rgba(255,255,255,0.09)',
   }
-  const inputFocusStyle = (focused) => focused
-    ? { borderColor: 'rgba(0,245,255,0.4)', boxShadow: '0 0 12px rgba(0,245,255,0.1)' }
-    : {}
-
   return (
     <section id="contact" className="section-pad relative">
       <div className="max-w-xl mx-auto px-6">
@@ -61,19 +58,6 @@ export default function Contact() {
           className="glass rounded-2xl p-8 glow-cyan"
           style={{ border: '1px solid rgba(0,245,255,0.12)' }}
         >
-          {sent ? (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.85 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="text-center py-14"
-            >
-              <div className="text-6xl mb-5">🚀</div>
-              <h3 className="text-xl font-bold mb-2" style={{ color: '#00F5FF' }}>
-                ¡Mensaje enviado!
-              </h3>
-              <p className="text-white/45">Te responderé pronto.</p>
-            </motion.div>
-          ) : (
             <form onSubmit={submit} className="space-y-5">
               {/* Name + Email */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
@@ -82,10 +66,14 @@ export default function Contact() {
                   { key: 'email', type: 'email', label: 'EMAIL',   ph: 'tu@email.com' },
                 ].map(({ key, type, label, ph }) => (
                   <div key={key}>
-                    <label className="block text-xs text-white/35 mb-2 tracking-widest">{label}</label>
+                    <label htmlFor={`contact-${key}`} className="block text-xs text-white/35 mb-2 tracking-widest">{label}</label>
                     <input
+                      id={`contact-${key}`}
                       type={type}
                       required
+                      minLength={key === 'name' ? 2 : undefined}
+                      maxLength={key === 'name' ? 80 : 254}
+                      autoComplete={key}
                       value={form[key]}
                       onChange={update(key)}
                       placeholder={ph}
@@ -98,9 +86,12 @@ export default function Contact() {
 
               {/* Message */}
               <div>
-                <label className="block text-xs text-white/35 mb-2 tracking-widest">MENSAJE</label>
+                <label htmlFor="contact-message" className="block text-xs text-white/35 mb-2 tracking-widest">MENSAJE</label>
                 <textarea
+                  id="contact-message"
                   required
+                  minLength={20}
+                  maxLength={1500}
                   rows={5}
                   value={form.message}
                   onChange={update('message')}
@@ -113,16 +104,17 @@ export default function Contact() {
               {/* Submit */}
               <motion.button
                 type="submit"
-                disabled={sending}
                 whileHover={{ scale: 1.03, boxShadow: '0 0 35px rgba(0,245,255,0.45)' }}
                 whileTap={{ scale: 0.97 }}
-                className="w-full py-4 font-bold rounded-xl text-sm tracking-widest transition-all disabled:opacity-50"
+                className="w-full py-4 font-bold rounded-xl text-sm tracking-widest transition-all"
                 style={{ background: '#00F5FF', color: '#000000' }}
               >
-                {sending ? 'ENVIANDO...' : 'ENVIAR MENSAJE →'}
+                CONTINUAR EN WHATSAPP →
               </motion.button>
+              <p className="text-white/30 text-xs text-center leading-relaxed">
+                Al continuar se abrirá WhatsApp con tu mensaje preparado. Nada se almacena en esta web.
+              </p>
             </form>
-          )}
 
           {/* Divider */}
           <div className="flex items-center gap-4 my-8">
@@ -134,7 +126,7 @@ export default function Contact() {
           {/* Quick contact buttons */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <motion.a
-              href="https://wa.me/18091234567"
+              href={DEFAULT_WHATSAPP_URL}
               target="_blank"
               rel="noopener noreferrer"
               whileHover={{ scale: 1.04, boxShadow: '0 0 25px rgba(37,211,102,0.35)' }}
@@ -148,9 +140,7 @@ export default function Contact() {
             </motion.a>
 
             <motion.a
-              href="https://github.com/babyblack996"
-              target="_blank"
-              rel="noopener noreferrer"
+              href={`mailto:${CONTACT.email}`}
               whileHover={{ scale: 1.04, boxShadow: '0 0 20px rgba(0,229,255,0.2)' }}
               className="flex items-center justify-center gap-2.5 w-full py-4 glass rounded-xl text-sm font-medium text-white/55 hover:text-white transition-all"
               style={{ border: '1px solid rgba(255,255,255,0.08)' }}
@@ -158,7 +148,7 @@ export default function Contact() {
               <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
               </svg>
-              GITHUB
+              {CONTACT.email}
             </motion.a>
           </div>
         </motion.div>
@@ -185,8 +175,13 @@ export default function Contact() {
             <p className="text-white/25 text-xs mt-2 tracking-widest">— Isael Patiño</p>
           </div>
           <p className="text-white/15 text-xs tracking-[0.2em]">
-            © 2025 isaelcode.dev · Construido con React + Three.js 🇩🇴
+            © {new Date().getFullYear()} isaelcode.dev · República Dominicana
           </p>
+          <div className="flex flex-wrap justify-center gap-4 mt-4 text-xs text-white/35">
+            <a href="/privacidad.html" className="hover:text-white">Privacidad</a>
+            <a href="/terminos.html" className="hover:text-white">Términos</a>
+            <a href="/aviso-legal.html" className="hover:text-white">Aviso legal</a>
+          </div>
         </motion.div>
 
       </div>
