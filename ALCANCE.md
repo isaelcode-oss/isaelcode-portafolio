@@ -3,7 +3,7 @@
 - [x] Objetivo: aumentar confianza y conversaciones comerciales con empresas.
 - [x] Audiencia: empresas de República Dominicana y Latinoamérica que necesitan software, automatización o IA aplicada.
 - [x] Incluye: propuesta de valor, servicios, proceso, proyectos demostrativos, perfil profesional, stack y contacto real.
-- [x] Incluye: SEO básico, metadatos sociales, sitemap, robots, seguridad HTTP, accesibilidad y documentos legales en borrador.
+- [x] Incluye: SEO básico, metadatos sociales, sitemap, robots, seguridad HTTP, accesibilidad y documentos legales (privacidad, términos, aviso legal).
 - [x] Incluye: experiencia visual de alto impacto (fondo 3D, parallax, typewriter, tilt) que se desactiva con `prefers-reduced-motion`.
 - [x] Incluye: asistente de chat con IA (Anthropic) vía `/api/chat`, sin persistencia propia de conversaciones, con límites de tasa y de tamaño.
 - [x] Contacto principal: WhatsApp +1 849-594-7884.

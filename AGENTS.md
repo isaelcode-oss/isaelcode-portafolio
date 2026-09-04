@@ -35,7 +35,7 @@ Del bloque `Servicio HTTP / API / SaaS` aplica solo lo compatible con una funci�
 - 2026-09-03: enviar el formulario mediante un enlace de WhatsApp prellenado y ofrecer `mailto:` como alternativa. Evita simular entregas y no ata el sitio a un proveedor hasta que se elija uno explícitamente.
 - 2026-09-03: presentar los trabajos como proyectos de demostración/capacidades técnicas; el propietario confirmó que las afirmaciones anteriores de uso real no eran ciertas.
 - 2026-09-03: mostrar una introducción tipo terminal Linux de 2.6 segundos en cada carga, con botón para saltarla, por decisión explícita del propietario.
-- 2026-09-03: mantener las marcas de revisión legal en `legal/REVISION-LEGAL.md`; las páginas públicas presentan el contenido operativo sin anotaciones internas ni afirmaciones de cumplimiento.
+- 2026-09-03: las páginas legales públicas presentan el contenido operativo sin anotaciones internas. Actualización 2026-09-04: por decisión del propietario se retiran las marcas de revisión legal y el archivo `legal/REVISION-LEGAL.md`; los documentos se entregan como definitivos.
 - 2026-09-03: mantener la identidad visual oscura, reduciendo efectos que distraen de la propuesta comercial.
 - 2026-09-03 (refinamiento premium): retirar código flotante, letras que siguen el mouse,
   typewriter, scanlines, tilt 3D de tarjetas, imágenes de stock de Unsplash y barras de
@@ -127,7 +127,7 @@ Del bloque `Servicio HTTP / API / SaaS` aplica solo lo compatible con una funci�
 - HECHO — 2026-09-04: verificación visual responsive con Chromium de Playwright (escritorio 1440px y móvil 390px, con scroll para disparar las animaciones `whileInView`). Nota: los emoji de las tarjetas salen como cuadros solo en el entorno de captura (WSL sin fuente emoji); los navegadores reales los renderizan.
 - NO APLICA: banner de cookies; la aplicación no carga analítica ni rastreadores propios.
 - HECHO — 2026-09-03: el formulario no simula éxito; abre WhatsApp y declara que la web no almacena los datos.
-- HECHO — 2026-09-03: documentos legales publicados como BORRADOR con cláusulas sensibles marcadas `[REVISAR CON ABOGADO]`.
+- HECHO — 2026-09-03: política de privacidad, términos y condiciones y aviso legal publicados.
 - HECHO — 2026-09-04 (LLM): timeout 25 s y `maxRetries: 1` en el cliente; `max_tokens` 500; si el proveedor falla el widget muestra el error y ofrece WhatsApp. Verificado con un arnés local que ejercita 405, 400, 413, 429 y 503.
 - HECHO — 2026-09-04 (LLM): entrada del usuario solo en `messages`, nunca concatenada al prompt de sistema; el sistema instruye a tratar los mensajes como preguntas. Validación estricta de forma, roles, tamaño y alternancia con tests en `test/chat-validate.test.js`.
 - HECHO — 2026-09-04 (LLM): salida tratada como no confiable: solo se reenvían deltas de texto, se comprueba `stop_reason` y una respuesta parcial se descarta en el cliente si el stream falla.
@@ -137,4 +137,4 @@ Del bloque `Servicio HTTP / API / SaaS` aplica solo lo compatible con una funci�
 - PENDIENTE — 2026-09-04 (LLM): límite de gasto mensual en la consola de Anthropic. Responsable: Isael. Condición: configurarlo antes de dejar el chat activo en producción.
 - PENDIENTE — 2026-09-04 (LLM): `ANTHROPIC_API_KEY` en Vercel y una conversación real verificada en el preview. Responsable: Isael (la clave) y desarrollo (la verificación).
 - NO APLICA (LLM): temperatura 0 y salida estructurada; el chat es conversacional y no necesita reproducibilidad.
-- HECHO — 2026-09-04: privacidad y términos actualizados con el asistente (Vercel y Anthropic como encargados, sin persistencia propia, descargo de respuestas orientativas) y anotados en `legal/REVISION-LEGAL.md`.
+- HECHO — 2026-09-04: privacidad y términos actualizados con el asistente (Vercel y Anthropic como encargados, sin persistencia propia, tratamiento de la IP, descargo de respuestas orientativas).
