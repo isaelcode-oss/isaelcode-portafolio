@@ -23,7 +23,7 @@ export const projects = [
     id: 3,
     title: 'Monitor de Precios',
     description:
-      'Sistema en operación: vigila fichas de producto de tiendas, detecta cambios de precio y disponibilidad, y alerta por Telegram y correo con entrega garantizada.',
+      'Sistema en operación: vigila fichas de producto de tiendas, detecta cambios de precio y disponibilidad, y alerta por Telegram y correo. Un fallo de red no pierde el aviso: se reintenta.',
     stack: ['Node.js 24', 'TypeScript', 'PostgreSQL', 'Docker', 'Zod'],
     category: 'Data Pipeline',
     icon: '📈',
