@@ -28,6 +28,8 @@ Aplica el bloque `Frontend web / landing / PWA` de `~/.ai/templates/CONTRATOS.md
 - 2026-09-03: centralizar teléfono, correo y URLs en un módulo de configuración para evitar fuentes de verdad duplicadas.
 - 2026-09-03: enviar el formulario mediante un enlace de WhatsApp prellenado y ofrecer `mailto:` como alternativa. Evita simular entregas y no ata el sitio a un proveedor hasta que se elija uno explícitamente.
 - 2026-09-03: presentar los trabajos como proyectos de demostración/capacidades técnicas; el propietario confirmó que las afirmaciones anteriores de uso real no eran ciertas.
+- 2026-09-03: mostrar una introducción tipo terminal Linux de 2.6 segundos en cada carga, con botón para saltarla, por decisión explícita del propietario.
+- 2026-09-03: mantener las marcas de revisión legal en `legal/REVISION-LEGAL.md`; las páginas públicas presentan el contenido operativo sin anotaciones internas ni afirmaciones de cumplimiento.
 - 2026-09-03: mantener la identidad visual oscura, reduciendo efectos que distraen de la propuesta comercial.
 
 ## Deuda conocida
