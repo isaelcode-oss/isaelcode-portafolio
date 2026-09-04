@@ -65,7 +65,7 @@ Aplica el bloque `Frontend web / landing / PWA` de `~/.ai/templates/CONTRATOS.md
 - PENDIENTE — 2026-09-03: retirar `style-src 'unsafe-inline'` de CSP. Responsable: Isael/desarrollo. Fecha objetivo: próximo refactor visual. Condición: migrar todos los estilos React inline a CSS.
 - HECHO — 2026-09-03: presupuesto de rendimiento definido como menos de 150 kB gzip de JavaScript inicial; medido en 94.85 kB gzip.
 - HECHO — 2026-09-03: foco visible, etiquetas de formulario y `prefers-reduced-motion` implementados; contraste y estructura revisados en código.
-- PENDIENTE — 2026-09-03: verificación visual automatizada responsive. Responsable: Isael/desarrollo. Fecha objetivo: antes de cambios visuales posteriores. Condición: instalar/restaurar `agent-browser` o verificar manualmente el preview en móvil y escritorio.
+- HECHO — 2026-09-04: verificación visual responsive con Chromium de Playwright (escritorio 1440px y móvil 390px, con scroll para disparar las animaciones `whileInView`). Nota: los emoji de las tarjetas salen como cuadros solo en el entorno de captura (WSL sin fuente emoji); los navegadores reales los renderizan.
 - NO APLICA: banner de cookies; la aplicación no carga analítica ni rastreadores propios.
 - HECHO — 2026-09-03: el formulario no simula éxito; abre WhatsApp y declara que la web no almacena los datos.
 - HECHO — 2026-09-03: documentos legales publicados como BORRADOR con cláusulas sensibles marcadas `[REVISAR CON ABOGADO]`.
