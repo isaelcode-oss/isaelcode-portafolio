@@ -55,9 +55,8 @@ Aplica el bloque `Frontend web / landing / PWA` de `~/.ai/templates/CONTRATOS.md
   `style-src-attr`) no puede retirarse del todo mientras la librería siga en uso. La
   condición de salida real es: sustituir framer-motion por animaciones CSS, o aceptar
   `style-src-attr 'unsafe-inline'` documentado como límite de la librería.
-- 2026-09-03: `src/components/canvas/` (Background3D, TechSphere) es código muerto: ningún
-  componente lo importa desde que el fondo 3D salió del App. Condición de salida: confirmarlo
-  con el propietario y borrar el directorio (son archivos previos a esta sesión).
+- 2026-09-04: `src/components/canvas/` (Background3D, TechSphere) borrado con confirmación
+  del propietario; era código muerto sin importadores.
 
 ## Cierre del contrato
 
