@@ -108,8 +108,8 @@ Del bloque `Servicio HTTP / API / SaaS` aplica solo lo compatible con una funci�
   esperado. Cambiar el secreto es una acción explícita, nunca un efecto de aprovisionar.
 - 2026-09-04: `ANTHROPIC_API_KEY` debe configurarse a mano en Vercel (producción y preview).
   Hasta entonces `/api/chat` responde 503 y el widget muestra un error honesto con enlace a
-  WhatsApp. Condición de salida: variable configurada y una conversación real verificada en
-  el preview.
+  WhatsApp. CERRADA 2026-09-04: configurada en ambos entornos y verificada con una
+  conversación real en el preview.
 
 - 2026-09-04: los previews automáticos de Vercel para los PR fallan con "Git author must have
   access" porque el correo del autor de los commits está vinculado a la cuenta de GitHub
@@ -135,6 +135,6 @@ Del bloque `Servicio HTTP / API / SaaS` aplica solo lo compatible con una funci�
 - PARCIAL — 2026-09-04 (LLM): límite por usuario (20/10 min por `cf-connecting-ip`, o `x-real-ip`) y global (300/10 min) por instancia, con tests en `test/chat-rate-limit.test.js`. Es mejor esfuerzo: ver deuda conocida (origen alcanzable sin Cloudflare). El freno duro es el límite de gasto en Anthropic.
 - HECHO — 2026-09-04 (auditoría): turnos del asistente firmados con HMAC y verificados en cada petición (tests en `test/chat-sign.test.js`); `Content-Type: application/json` obligatorio y `Sec-Fetch-Site: cross-site` rechazado; `Content-Length` obligatorio y acotado; la generación se aborta si el cliente cierra; `maxRetries: 0` para que el peor caso quepa en `maxDuration`; el widget descarta respuestas sin frame `done`; los logs no incluyen mensajes crudos del proveedor. Verificado con el arnés local (415, 403, 411, 503, 400 firma inválida, 200 firma válida).
 - PENDIENTE — 2026-09-04 (LLM): límite de gasto mensual en la consola de Anthropic. Responsable: Isael. Condición: configurarlo antes de dejar el chat activo en producción.
-- PENDIENTE — 2026-09-04 (LLM): `ANTHROPIC_API_KEY` en Vercel y una conversación real verificada en el preview. Responsable: Isael (la clave) y desarrollo (la verificación).
+- HECHO — 2026-09-04 (LLM): `ANTHROPIC_API_KEY` y `CHAT_SIGNING_SECRET` en Vercel (production y preview). Verificado en el preview: conversación real de dos turnos con streaming y firma válida, historial forjado rechazado con 400. La primera clave se rotó porque pasó por el chat de la sesión.
 - NO APLICA (LLM): temperatura 0 y salida estructurada; el chat es conversacional y no necesita reproducibilidad.
 - HECHO — 2026-09-04: privacidad y términos actualizados con el asistente (Vercel y Anthropic como encargados, sin persistencia propia, tratamiento de la IP, descargo de respuestas orientativas).
