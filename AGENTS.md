@@ -45,9 +45,9 @@ Aplica el bloque `Frontend web / landing / PWA` de `~/.ai/templates/CONTRATOS.md
   respaldan la propuesta empresarial y no hay proyecto visible que los demuestre.
 - 2026-09-04: reparto de remotos decidido por el propietario — `isaelcode-oss` es la
   organización PÚBLICA (la cara visible en GitHub); `babyblack996` es la cuenta personal
-  donde viven todos los proyectos Y la que está conectada a Vercel: **el despliegue sale de
-  `origin` (babyblack996)**. Este repo se empuja a ambos; para producción, lo que importa es
-  que `origin/master` esté al día.
+  donde viven todos los proyectos, la conectada a Vercel y el **remoto PRINCIPAL de este
+  repo**: la fuente de verdad es `origin` (babyblack996) y el despliegue sale de
+  `origin/master`. `isaelcode` (isaelcode-oss) es el espejo público y se empuja después.
 
 ## Deuda conocida
 
