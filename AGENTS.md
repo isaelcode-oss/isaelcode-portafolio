@@ -48,6 +48,10 @@ Aplica el bloque `Frontend web / landing / PWA` de `~/.ai/templates/CONTRATOS.md
   donde viven todos los proyectos, la conectada a Vercel y el **remoto PRINCIPAL de este
   repo**: la fuente de verdad es `origin` (babyblack996) y el despliegue sale de
   `origin/master`. `isaelcode` (isaelcode-oss) es el espejo público y se empuja después.
+- 2026-09-04: el espejo `isaelcode-oss/isaelcode-portafolio` se hizo PÚBLICO por decisión del
+  propietario. Antes se verificó que el historial completo no contiene `.env`, tokens ni claves.
+  Con esto el fetch del espejo funciona con cualquier cuenta; el push sigue exigiendo la cuenta
+  `isaelcode-oss` en `gh`.
 
 ## Deuda conocida
 
