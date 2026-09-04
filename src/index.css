@@ -19,6 +19,56 @@ body {
   overflow-x: hidden;
 }
 
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid #00e5ff;
+  outline-offset: 3px;
+}
+
+.eyebrow {
+  color: #00e5ff;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.3em;
+  margin-bottom: 1rem;
+}
+
+.section-title {
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 700;
+  line-height: 1.12;
+  margin-bottom: 1.25rem;
+}
+
+.section-copy {
+  color: rgba(255, 255, 255, 0.56);
+  font-size: 1.075rem;
+  line-height: 1.7;
+}
+
+.service-card {
+  border-radius: 1rem;
+  padding: 1.75rem;
+}
+
+.service-number { color: #00e5ff; font-family: monospace; font-size: 0.75rem; }
+.service-card h3 { font-size: 1.25rem; font-weight: 700; margin: 1.5rem 0 0.75rem; }
+.service-card p { color: rgba(255, 255, 255, 0.52); line-height: 1.65; }
+.service-card ul { display: grid; gap: 0.5rem; margin-top: 1.5rem; }
+.service-card li { color: rgba(255, 255, 255, 0.72); font-size: 0.875rem; }
+.service-card li::before { color: #00ff85; content: '✓'; margin-right: 0.6rem; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
 /* Scrollbar */
 ::-webkit-scrollbar { width: 5px; }
 ::-webkit-scrollbar-track { background: #050d18; }

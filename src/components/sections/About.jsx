@@ -1,11 +1,10 @@
 import { useRef } from 'react'
 import { motion, useInView } from 'framer-motion'
-import TechSphere from '../canvas/TechSphere.jsx'
 
-const STATS = [
-  { value: '4+',   label: 'Proyectos\nCompletados' },
-  { value: '10k+', label: 'Capacidad\nUsuarios' },
-  { value: '85%',  label: 'Backend\nFocus' },
+const PRINCIPLES = [
+  { value: '01', label: 'Seguridad desde el diseño' },
+  { value: '02', label: 'Alcance y riesgos claros' },
+  { value: '03', label: 'Entrega verificable' },
 ]
 
 const TECH_LABELS = [
@@ -40,22 +39,20 @@ export default function About() {
             </h2>
 
             <p className="text-white/55 text-lg leading-relaxed mb-5">
-              Soy <strong className="text-white/85">Isael Patiño</strong>, Full-Stack Developer
-              con enfoque en plataformas de alta concurrencia,
-              ERPs personalizados y herramientas de automatización.
+              Soy <strong className="text-white/85">Isael Patiño</strong>, ingeniero de software e IA
+              enfocado en plataformas empresariales, ERPs personalizados y automatización.
               Basado en <strong className="text-white/80">República Dominicana</strong>,
               construyo soluciones para el mercado latinoamericano e internacional.
             </p>
 
             <p className="text-white/40 leading-relaxed mb-10">
-              Especializado en arquitecturas backend escalables, integración de APIs de terceros
-              y procesamiento asíncrono con BullMQ y Redis. Todos mis proyectos están
-              dockerizados y listos para producción.
+              Trabajo desde el proceso de negocio hasta la implementación: arquitectura,
+              integraciones, seguridad, despliegue y una ruta clara para operar la solución.
             </p>
 
             {/* Stats */}
             <div className="grid grid-cols-3 gap-4 mb-10">
-              {STATS.map((s) => (
+              {PRINCIPLES.map((s) => (
                 <div
                   key={s.label}
                   className="glass rounded-xl p-4 text-center glow-cyan"
@@ -92,21 +89,27 @@ export default function About() {
             </div>
           </motion.div>
 
-          {/* ── Right: 3D sphere ── */}
+          {/* Proceso visible: reduce incertidumbre para el cliente. */}
           <motion.div
             initial={{ opacity: 0, x: 60 }}
             animate={inView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.9, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
-            className="h-[480px] relative"
+            className="relative"
           >
-            {/* Glow behind the canvas */}
-            <div
-              className="absolute inset-0 rounded-full pointer-events-none"
-              style={{
-                background: 'radial-gradient(ellipse at center, rgba(0,245,255,0.06) 0%, transparent 70%)',
-              }}
-            />
-            <TechSphere />
+            <div className="glass rounded-2xl p-8" style={{ border: '1px solid rgba(0,229,255,0.14)' }}>
+              <p className="eyebrow">CÓMO TRABAJO</p>
+              {[
+                ['Diagnóstico', 'Objetivo, proceso actual, restricciones y riesgos.'],
+                ['Propuesta', 'Alcance, arquitectura, entregables y criterios de aceptación.'],
+                ['Construcción', 'Avances demostrables, decisiones documentadas y control de cambios.'],
+                ['Entrega', 'Verificación, despliegue y traspaso operativo.'],
+              ].map(([title, copy], index) => (
+                <div key={title} className="flex gap-4 py-5 border-b border-white/10 last:border-0">
+                  <span className="text-[#00E5FF] font-mono text-sm">0{index + 1}</span>
+                  <div><h3 className="font-semibold mb-1">{title}</h3><p className="text-white/45 text-sm leading-relaxed">{copy}</p></div>
+                </div>
+              ))}
+            </div>
           </motion.div>
 
         </div>

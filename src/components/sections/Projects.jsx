@@ -20,15 +20,15 @@ export default function Projects() {
           className="text-center mb-16"
         >
           <p className="text-xs font-semibold tracking-[0.3em] mb-4" style={{ color: '#9D00FF' }}>
-            PROYECTOS
+            TRABAJO SELECCIONADO
           </p>
           <h2 className="text-4xl md:text-5xl font-bold mb-5">
-            Proyectos{' '}
-            <span className="gradient-text">estrella</span>
+            Capacidades demostradas con{' '}
+            <span className="gradient-text">prototipos funcionales</span>
           </h2>
           <p className="text-white/45 max-w-2xl mx-auto leading-relaxed">
-            Plataformas reales, en producción, con código disponible en GitHub.
-            De ERPs dominicanos a sistemas fintech con criptomonedas.
+            Proyectos de demostración construidos para explorar flujos empresariales,
+            integraciones y decisiones de arquitectura. No se presentan como casos de clientes.
           </p>
         </motion.div>
 

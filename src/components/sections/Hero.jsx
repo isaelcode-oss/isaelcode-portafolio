@@ -1,11 +1,11 @@
 import { useState, useEffect, useRef } from 'react'
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion'
+import { DEFAULT_WHATSAPP_URL } from '../../config/site.js'
 
 const ROLES = [
-  'Full-Stack Developer',
-  'Backend Architect',
-  'Platform Builder',
-  'Python & Node.js Dev',
+  'Software empresarial',
+  'Automatización de procesos',
+  'IA aplicada a operaciones',
 ]
 
 const STACK_TAGS = ['Node.js', 'Python', 'React', 'TypeScript', 'PostgreSQL', 'Docker', 'AWS S3']
@@ -219,7 +219,7 @@ export default function Hero() {
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 1 }}
-          className="text-xl md:text-2xl font-medium mb-4 h-9"
+          className="text-lg md:text-xl font-medium mb-5 h-8"
           style={{ color: '#00E5FF' }}
         >
           <TypeWriter texts={ROLES} />
@@ -232,7 +232,8 @@ export default function Hero() {
           transition={{ duration: 0.8, delay: 1.1 }}
           className="text-white/40 text-lg leading-relaxed mb-10 max-w-xl mx-auto"
         >
-          Construyo plataformas que escalan — desde ERPs dominicanos hasta sistemas fintech.
+          Diseño software, automatizaciones y soluciones de IA para empresas que necesitan
+          operar mejor, conectar sus sistemas y eliminar trabajo manual.
         </motion.p>
 
         {/* CTAs */}
@@ -243,17 +244,17 @@ export default function Hero() {
           className="flex flex-col sm:flex-row gap-3 justify-center items-center mb-12"
         >
           <motion.a
-            href="#projects"
+            href="#contact"
             whileHover={{ scale: 1.06, boxShadow: '0 0 35px rgba(0,229,255,0.5)' }}
             whileTap={{ scale: 0.97 }}
             className="px-8 py-3.5 font-bold rounded-xl text-sm tracking-widest"
             style={{ background: 'linear-gradient(135deg, #00E5FF, #00FF85)', color: '#000' }}
           >
-            VER PROYECTOS →
+            AGENDAR DIAGNÓSTICO
           </motion.a>
 
           <motion.a
-            href="https://wa.me/18091234567"
+            href={DEFAULT_WHATSAPP_URL}
             target="_blank"
             rel="noopener noreferrer"
             whileHover={{ scale: 1.06, boxShadow: '0 0 25px rgba(37,211,102,0.45)' }}
@@ -262,13 +263,11 @@ export default function Hero() {
             style={{ background: '#25D366', color: '#000' }}
           >
             <WhatsAppIcon />
-            WHATSAPP
+            HABLAR POR WHATSAPP
           </motion.a>
 
           <motion.a
-            href="https://github.com/babyblack996"
-            target="_blank"
-            rel="noopener noreferrer"
+            href="#projects"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.97 }}
             className="flex items-center gap-2 px-8 py-3.5 glass rounded-xl text-sm tracking-widest text-white/55 hover:text-white transition-colors"
@@ -276,7 +275,7 @@ export default function Hero() {
             <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
               <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
             </svg>
-            GITHUB
+            VER TRABAJO
           </motion.a>
         </motion.div>
 
