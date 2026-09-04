@@ -96,6 +96,13 @@ Del bloque `Servicio HTTP / API / SaaS` aplica solo lo compatible con una funci�
   WhatsApp. Condición de salida: variable configurada y una conversación real verificada en
   el preview.
 
+- 2026-09-04: los previews automáticos de Vercel para los PR fallan con "Git author must have
+  access" porque el correo del autor de los commits está vinculado a la cuenta de GitHub
+  `isaelcode-oss`, que no es miembro del equipo de Vercel (PR #3 y #4 muestran el check en
+  FAILURE; producción sí despliega porque el merge lo firma GitHub). Mientras tanto el preview
+  se genera con `vercel deploy` desde la CLI. Condición de salida: invitar a `isaelcode-oss`
+  al equipo de Vercel, o firmar los commits con un correo vinculado a `babyblack996`.
+
 ## Cierre del contrato
 
 - HECHO — 2026-09-03: cabeceras `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy` y `Permissions-Policy` verificadas en el preview Vercel.
