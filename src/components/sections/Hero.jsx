@@ -1,30 +1,9 @@
-import { useState, useEffect, useRef } from 'react'
-import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { DEFAULT_WHATSAPP_URL } from '../../config/site.js'
 
-const ROLES = [
-  'Software empresarial',
-  'Automatización de procesos',
-  'IA aplicada a operaciones',
-]
+const ROLES = ['Software empresarial', 'Automatización de procesos', 'IA aplicada a operaciones']
 
 const STACK_TAGS = ['Node.js', 'Python', 'React', 'TypeScript', 'PostgreSQL', 'Docker', 'AWS S3']
-
-// Floating code snippets that match the logo aesthetic
-const CODE_FLOATS = [
-  { text: 'class User {',      top: '8%',  left: '3%'  },
-  { text: '  def update():',   top: '15%', left: '2%'  },
-  { text: '  self = object',   top: '22%', left: '4%'  },
-  { text: '</div>',            top: '78%', left: '2%'  },
-  { text: '<div>',             top: '85%', left: '5%'  },
-  { text: 'return data',       top: '72%', left: '1%'  },
-  { text: '<div class="app">', top: '9%',  right: '2%' },
-  { text: '  async fetchData()', top: '16%', right: '1%' },
-  { text: '  </div>',          top: '23%', right: '3%' },
-  { text: 'class User {',      top: '75%', right: '2%' },
-  { text: '  setState({})',    top: '82%', right: '3%' },
-  { text: '</div>',            top: '88%', right: '5%' },
-]
 
 const WhatsAppIcon = () => (
   <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
@@ -32,144 +11,10 @@ const WhatsAppIcon = () => (
   </svg>
 )
 
-function TypeWriter({ texts }) {
-  const [idx, setIdx]           = useState(0)
-  const [text, setText]         = useState('')
-  const [deleting, setDeleting] = useState(false)
-
-  useEffect(() => {
-    const full  = texts[idx]
-    const delay = deleting ? 45 : 110
-    const timer = setTimeout(() => {
-      if (!deleting) {
-        if (text.length < full.length) setText(full.slice(0, text.length + 1))
-        else setTimeout(() => setDeleting(true), 2200)
-      } else {
-        if (text.length > 0) setText(text.slice(0, -1))
-        else { setDeleting(false); setIdx((i) => (i + 1) % texts.length) }
-      }
-    }, delay)
-    return () => clearTimeout(timer)
-  }, [text, deleting, idx, texts])
-
-  return (
-    <span>
-      {text}
-      <span className="animate-pulse" style={{ color: '#00E5FF' }}>|</span>
-    </span>
-  )
-}
-
-// A single letter that follows the mouse with a parallax depth
-function NeuralLetter({ char, depth, index, mouseX, mouseY, baseColor }) {
-  const tx = useTransform(mouseX, [-1, 1], [-depth * 18, depth * 18])
-  const ty = useTransform(mouseY, [-1, 1], [-depth * 10, depth * 10])
-  const sx = useSpring(tx, { stiffness: 80 - index * 2, damping: 18 })
-  const sy = useSpring(ty, { stiffness: 80 - index * 2, damping: 18 })
-
-  const isGreen = baseColor === 'green'
-  const hoverColor = isGreen ? '#00FF85' : '#00E5FF'
-  const hoverGlow  = isGreen
-    ? '0 0 30px rgba(0,255,133,0.9), 0 0 60px rgba(0,255,133,0.4)'
-    : '0 0 30px rgba(0,229,255,0.9), 0 0 60px rgba(0,229,255,0.4)'
-
-  return (
-    <motion.span
-      style={{
-        x: sx, y: sy,
-        display: 'inline-block',
-        color: isGreen ? '#00FF85' : '#ffffff',
-        textShadow: isGreen ? '0 0 18px rgba(0,255,133,0.6)' : 'none',
-      }}
-      initial={{ opacity: 0, y: 60 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.9, delay: 0.2 + index * 0.06, ease: [0.16, 1, 0.3, 1] }}
-      className="relative cursor-default select-none"
-      whileHover={{
-        color: hoverColor,
-        textShadow: hoverGlow,
-        scale: 1.12,
-        transition: { duration: 0.15 },
-      }}
-    >
-      {char}
-    </motion.span>
-  )
-}
-
-// Neural interactive title — letters move with mouse, .dev letters are green
-function NeuralTitle({ text }) {
-  const ref    = useRef(null)
-  const mouseX = useMotionValue(0)
-  const mouseY = useMotionValue(0)
-
-  const handleMouse = (e) => {
-    const rect  = ref.current?.getBoundingClientRect()
-    if (!rect) return
-    mouseX.set(((e.clientX - rect.left) / rect.width  - 0.5) * 2)
-    mouseY.set(((e.clientY - rect.top)  / rect.height - 0.5) * 2)
-  }
-
-  const handleLeave = () => { mouseX.set(0); mouseY.set(0) }
-
-  const chars  = text.split('')
-  // find where ".dev" starts — last 4 chars
-  const devStart = text.length - 4  // ".dev" = 4 chars
-  const depths = chars.map((_, i) => 0.4 + (i % 3) * 0.32)
-
-  return (
-    <div
-      ref={ref}
-      onMouseMove={handleMouse}
-      onMouseLeave={handleLeave}
-      style={{ fontSize: 'clamp(3.4rem, 11vw, 9rem)', fontWeight: 700, lineHeight: 1, letterSpacing: '-0.02em' }}
-    >
-      {chars.map((char, i) => (
-        <NeuralLetter
-          key={i}
-          char={char}
-          depth={depths[i]}
-          index={i}
-          mouseX={mouseX}
-          mouseY={mouseY}
-          baseColor={i >= devStart ? 'green' : 'white'}
-        />
-      ))}
-    </div>
-  )
-}
-
 export default function Hero() {
   return (
     <section id="hero" className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      <div className="absolute inset-0 grid-bg opacity-100 pointer-events-none" />
-
-      {/* Aurora burst — like the light rays in the logo */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background: `
-            radial-gradient(ellipse 60% 40% at 55% 48%, rgba(0,229,255,0.07) 0%, transparent 60%),
-            radial-gradient(ellipse 40% 30% at 48% 50%, rgba(157,0,255,0.08) 0%, transparent 55%),
-            radial-gradient(ellipse 35% 25% at 60% 52%, rgba(0,255,133,0.05) 0%, transparent 50%),
-            radial-gradient(ellipse at center, transparent 25%, #050d18 85%)
-          `,
-        }}
-      />
-
-      {/* Floating code snippets — like in the logo background */}
-      {CODE_FLOATS.map((c, i) => (
-        <motion.div
-          key={i}
-          className="absolute code-float hidden md:block"
-          style={{ top: c.top, left: c.left, right: c.right }}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 2 + i * 0.15, duration: 1.2 }}
-        >
-          {c.text}
-        </motion.div>
-      ))}
+      <div className="absolute inset-0 hero-aurora pointer-events-none" />
 
       <div className="relative z-10 text-center px-6 max-w-5xl mx-auto pt-24">
 
@@ -178,58 +23,49 @@ export default function Hero() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          className="inline-flex items-center gap-2.5 glass rounded-full px-5 py-2 mb-8"
-          style={{ border: '1px solid rgba(0,245,255,0.18)' }}
+          className="hero-badge glass rounded-full inline-flex items-center gap-2.5 px-5 py-2 mb-8"
         >
-          <span className="w-2 h-2 rounded-full animate-pulse" style={{ background: '#00E5FF' }} />
+          <span className="hero-badge__dot" />
           <span className="text-sm text-white/55">Disponible para proyectos</span>
           <span className="text-white/20">•</span>
-          <span className="text-sm" style={{ color: '#00E5FF' }}>🇩🇴 República Dominicana</span>
+          <span className="hero-badge__location text-sm">🇩🇴 República Dominicana</span>
         </motion.div>
 
-        {/* </>  bracket mark — from the logo */}
+        {/* Brand mark */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.7 }}
+          initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.9, delay: 0.05, ease: [0.16, 1, 0.3, 1] }}
           className="mb-3 flex justify-center"
         >
-          <span
-            className="text-3xl md:text-4xl font-bold select-none"
-            style={{
-              background: 'linear-gradient(135deg, #9D00FF, #00E5FF, #00FF85)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text',
-              filter: 'drop-shadow(0 0 12px rgba(0,229,255,0.5))',
-              letterSpacing: '0.05em',
-            }}
-          >
-            {'</>'}
-          </span>
+          <span className="brand-mark text-3xl md:text-4xl font-bold select-none">{'</>'}</span>
         </motion.div>
 
-        {/* Neural interactive title — "isaelcode" blanco + ".dev" verde neón */}
-        <div className="mb-5 text-white">
-          <NeuralTitle text="isaelcode.dev" />
-        </div>
+        {/* Title */}
+        <motion.h1
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
+          className="hero-title mb-6"
+        >
+          isaelcode<span className="hero-title__dev">.dev</span>
+        </motion.h1>
 
-        {/* Typewriter */}
-        <motion.div
+        {/* Roles */}
+        <motion.p
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 1 }}
-          className="text-lg md:text-xl font-medium mb-5 h-8"
-          style={{ color: '#00E5FF' }}
+          transition={{ duration: 0.8, delay: 0.5 }}
+          className="hero-roles mb-5"
         >
-          <TypeWriter texts={ROLES} />
-        </motion.div>
+          {ROLES.join('  ·  ')}
+        </motion.p>
 
         {/* Tagline */}
         <motion.p
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 1.1 }}
+          transition={{ duration: 0.8, delay: 0.65 }}
           className="text-white/40 text-lg leading-relaxed mb-10 max-w-xl mx-auto"
         >
           Diseño software, automatizaciones y soluciones de IA para empresas que necesitan
@@ -240,50 +76,31 @@ export default function Hero() {
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 1.2 }}
+          transition={{ duration: 0.8, delay: 0.8 }}
           className="flex flex-col sm:flex-row gap-3 justify-center items-center mb-12"
         >
-          <motion.a
-            href="#contact"
-            whileHover={{ scale: 1.06, boxShadow: '0 0 35px rgba(0,229,255,0.5)' }}
-            whileTap={{ scale: 0.97 }}
-            className="px-8 py-3.5 font-bold rounded-xl text-sm tracking-widest"
-            style={{ background: 'linear-gradient(135deg, #00E5FF, #00FF85)', color: '#000' }}
-          >
+          <a href="#contact" className="cta cta--primary">
             AGENDAR DIAGNÓSTICO
-          </motion.a>
-
-          <motion.a
+          </a>
+          <a
             href={DEFAULT_WHATSAPP_URL}
             target="_blank"
             rel="noopener noreferrer"
-            whileHover={{ scale: 1.06, boxShadow: '0 0 25px rgba(37,211,102,0.45)' }}
-            whileTap={{ scale: 0.97 }}
-            className="flex items-center gap-2 px-8 py-3.5 font-bold rounded-xl text-sm tracking-widest"
-            style={{ background: '#25D366', color: '#000' }}
+            className="cta cta--whatsapp"
           >
             <WhatsAppIcon />
             HABLAR POR WHATSAPP
-          </motion.a>
-
-          <motion.a
-            href="#projects"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.97 }}
-            className="flex items-center gap-2 px-8 py-3.5 glass rounded-xl text-sm tracking-widest text-white/55 hover:text-white transition-colors"
-          >
-            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
-            </svg>
-            VER TRABAJO
-          </motion.a>
+          </a>
+          <a href="#projects" className="cta cta--ghost glass">
+            VER TRABAJO →
+          </a>
         </motion.div>
 
-        {/* Floating tags */}
+        {/* Stack tags */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 1.2, delay: 1.4 }}
+          transition={{ duration: 1.2, delay: 1 }}
           className="flex flex-wrap gap-2 justify-center"
         >
           {STACK_TAGS.map((tag, i) => (
@@ -291,9 +108,8 @@ export default function Hero() {
               key={tag}
               initial={{ opacity: 0, scale: 0.7 }}
               animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 1.4 + i * 0.07 }}
-              className="px-3 py-1.5 glass rounded-full text-xs text-white/30"
-              style={{ border: '1px solid rgba(255,255,255,0.06)' }}
+              transition={{ delay: 1 + i * 0.06 }}
+              className="stack-tag glass rounded-full px-3 py-1.5 text-xs"
             >
               {tag}
             </motion.span>
@@ -305,15 +121,14 @@ export default function Hero() {
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 2.8 }}
+        transition={{ delay: 1.8 }}
         className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
       >
         <span className="text-white/20 text-xs tracking-[0.3em]">SCROLL</span>
         <motion.div
           animate={{ y: [0, 10, 0] }}
           transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
-          className="w-px h-10"
-          style={{ background: 'linear-gradient(to bottom, #00E5FF55, transparent)' }}
+          className="scroll-cue-line w-px h-10"
         />
       </motion.div>
     </section>

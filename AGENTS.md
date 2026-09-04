@@ -31,12 +31,33 @@ Aplica el bloque `Frontend web / landing / PWA` de `~/.ai/templates/CONTRATOS.md
 - 2026-09-03: mostrar una introducción tipo terminal Linux de 2.6 segundos en cada carga, con botón para saltarla, por decisión explícita del propietario.
 - 2026-09-03: mantener las marcas de revisión legal en `legal/REVISION-LEGAL.md`; las páginas públicas presentan el contenido operativo sin anotaciones internas ni afirmaciones de cumplimiento.
 - 2026-09-03: mantener la identidad visual oscura, reduciendo efectos que distraen de la propuesta comercial.
+- 2026-09-03 (refinamiento premium): retirar código flotante, letras que siguen el mouse,
+  typewriter, scanlines, tilt 3D de tarjetas, imágenes de stock de Unsplash y barras de
+  habilidades con porcentajes inventados. Acento único cian (+verde de marca en `.dev`,
+  checks y gradiente); el púrpura queda solo en el logo del navbar, que replica el logo real.
+- 2026-09-03: proyectos — se retiran MomTalk Platform y Viral Spy; DemoIn pasa a llamarse
+  CloudVault; se añade Monitor de Precios (sistema real en operación, `~/projects/prueba-scraper`).
+- 2026-09-03: se retiran todos los enlaces a GitHub de la sección de proyectos. Los repos
+  originales existen en `babyblack996` pero son privados: un visitante recibe 404 (verificado
+  con curl sin autenticación). Condición para reponerlos: que los repos sean públicos, en
+  `babyblack996` o migrados a `isaelcode-oss`.
+- 2026-09-03: se retiran `WalletConnect` y `USDT TRC20` de la nube de integraciones; no
+  respaldan la propuesta empresarial y no hay proyecto visible que los demuestre.
 
 ## Deuda conocida
 
 - 2026-09-03: `~/.ai/templates/ALCANCE.md` no existe en el entorno y no pudo copiarse literalmente. Se creó `ALCANCE.md` con el alcance verificable del proyecto. Condición de salida: cuando exista la plantilla oficial, comparar ambos archivos y migrar cualquier campo obligatorio ausente.
 - 2026-09-03: GitHub CLI guarda la credencial en texto plano porque WSL no tiene un keyring disponible. Condición de salida: configurar Git Credential Manager o un keyring compatible y volver a autenticar `gh`.
 - 2026-09-03: la CSP mantiene `style-src 'unsafe-inline'` porque el código heredado usa estilos React inline extensivamente. Condición de salida: migrar los estilos inline a clases/hojas CSS y retirar esa fuente de la directiva antes de marcar la CSP como completa.
+  Actualización 2026-09-03: el refinamiento premium migró a clases CSS los estilos inline
+  estáticos de Hero, Projects, ProjectCard, Skills, About y Contact. PERO `framer-motion`
+  anima escribiendo el atributo `style` en runtime, así que `'unsafe-inline'` (o
+  `style-src-attr`) no puede retirarse del todo mientras la librería siga en uso. La
+  condición de salida real es: sustituir framer-motion por animaciones CSS, o aceptar
+  `style-src-attr 'unsafe-inline'` documentado como límite de la librería.
+- 2026-09-03: `src/components/canvas/` (Background3D, TechSphere) es código muerto: ningún
+  componente lo importa desde que el fondo 3D salió del App. Condición de salida: confirmarlo
+  con el propietario y borrar el directorio (son archivos previos a esta sesión).
 
 ## Cierre del contrato
 

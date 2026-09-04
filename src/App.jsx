@@ -13,7 +13,7 @@ export default function App() {
   const finishBoot = useCallback(() => setBooting(false), [])
 
   return (
-    <div className="scanlines">
+    <div>
       {booting && <BootScreen onComplete={finishBoot} />}
       <div className="fixed inset-0 grid-bg" aria-hidden="true" />
 

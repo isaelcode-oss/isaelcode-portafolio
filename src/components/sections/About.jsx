@@ -28,7 +28,7 @@ export default function About() {
             animate={inView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
           >
-            <p className="text-xs font-semibold tracking-[0.3em] mb-4" style={{ color: '#00F5FF' }}>
+            <p className="eyebrow tracking-[0.3em]">
               SOBRE MÍ
             </p>
 
@@ -76,12 +76,7 @@ export default function About() {
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={inView ? { opacity: 1, scale: 1 } : {}}
                   transition={{ delay: 0.4 + i * 0.05 }}
-                  className="px-3 py-1 rounded-full text-xs font-medium"
-                  style={{
-                    background: i % 2 === 0 ? 'rgba(0,245,255,0.08)' : 'rgba(157,0,255,0.08)',
-                    color: i % 2 === 0 ? '#00F5FF' : '#9D00FF',
-                    border: `1px solid ${i % 2 === 0 ? 'rgba(0,245,255,0.2)' : 'rgba(157,0,255,0.2)'}`,
-                  }}
+                  className="about-chip"
                 >
                   {t}
                 </motion.span>
