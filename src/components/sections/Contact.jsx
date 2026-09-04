@@ -38,7 +38,7 @@ export default function Contact() {
           transition={{ duration: 0.85 }}
           className="text-center mb-14"
         >
-          <p className="text-xs font-semibold tracking-[0.3em] mb-4" style={{ color: '#9D00FF' }}>
+          <p className="eyebrow tracking-[0.3em]">
             CONTACTO
           </p>
           <h2 className="text-4xl md:text-5xl font-bold mb-5">
