@@ -160,16 +160,14 @@ export default async function handler(req, res) {
 
   let reply = ''
   try {
-    // fallbacks: "default" reintenta en otro modelo si el clasificador de
-    // seguridad rechaza una consulta legítima, sin lógica en el cliente.
-    stream = anthropic.beta.messages.stream({
+    // Haiku 4.5 no admite output_config.effort ni el parámetro fallbacks, así
+    // que la petición se mantiene mínima. La salida sigue siendo entrada no
+    // confiable: solo se reenvían deltas de texto y se comprueba stop_reason.
+    stream = anthropic.messages.stream({
       model: MODEL,
       max_tokens: MAX_OUTPUT_TOKENS,
       system: [{ type: 'text', text: SYSTEM_PROMPT, cache_control: { type: 'ephemeral' } }],
       messages: history,
-      output_config: { effort: 'low' },
-      betas: ['server-side-fallback-2026-07-01'],
-      fallbacks: 'default',
     })
 
     for await (const event of stream) {

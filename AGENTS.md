@@ -26,7 +26,7 @@ Del bloque `Servicio HTTP / API / SaaS` aplica solo lo compatible con una funci�
 - WhatsApp y correo bajo `isaelcode.dev`: canales de contacto reales sin introducir un procesador de formularios externo.
 - Cloudflare: borde público existente; no se cambia su configuración en este alcance.
 - Validación HTML del formulario: el contenido se codifica en el cliente y se entrega a WhatsApp; no se almacena en esta aplicación.
-- Anthropic (`@anthropic-ai/sdk`, modelo `claude-opus-5`): genera las respuestas del asistente de chat. Clave en `ANTHROPIC_API_KEY` en Vercel, nunca en el repo. Se eligió por ser el proveedor por defecto del stack y por `fallbacks: "default"`, que evita que un falso positivo del clasificador deje al visitante sin respuesta.
+- Anthropic (`@anthropic-ai/sdk`, modelo `claude-haiku-4-5`): genera las respuestas del asistente de chat. Clave en `ANTHROPIC_API_KEY` en Vercel, nunca en el repo. Se eligió Haiku 4.5 por ser el modelo más barato y suficiente para una tarea de orientación comercial; subir a `claude-sonnet-5` es un solo cambio en `server/chat/prompt.js`.
 - three.js: fondo neuronal 3D. Se carga en un chunk diferido con `import()` para no romper el presupuesto inicial.
 
 ## Decisiones reversibles
@@ -64,7 +64,12 @@ Del bloque `Servicio HTTP / API / SaaS` aplica solo lo compatible con una funci�
   sin IA. Backend: `api/chat.js` (función Node en Vercel) con SSE. Cliente: `ChatWidget.jsx`
   cargado en chunk diferido. La conversación vive solo en memoria del navegador; no se persiste
   en ningún lado propio. Límites: 24 mensajes, 1500 caracteres por mensaje, 12000 en total,
-  500 tokens de salida, timeout 25 s, `effort: low` para latencia de chat.
+  500 tokens de salida, timeout 25 s. Modelo `claude-haiku-4-5` (el más barato).
+- 2026-09-05: se cambió el modelo del asistente de `claude-opus-5` a `claude-haiku-4-5`
+  por decisión del propietario (reducir costo). Haiku 4.5 no admite `output_config.effort`
+  ni el parámetro `fallbacks`, así que la petición se simplificó: `client.messages.stream`
+  sin betas. Sin fallback de clasificador porque Haiku no lo requiere. Reversible en
+  `server/chat/prompt.js`.
 - 2026-09-04: el espejo `isaelcode-oss/isaelcode-portafolio` se hizo PÚBLICO por decisión del
   propietario. Antes se verificó que el historial completo no contiene `.env`, tokens ni claves.
   Con esto el fetch del espejo funciona con cualquier cuenta; el push sigue exigiendo la cuenta
@@ -136,5 +141,5 @@ Del bloque `Servicio HTTP / API / SaaS` aplica solo lo compatible con una funci�
 - HECHO — 2026-09-04 (auditoría): turnos del asistente firmados con HMAC y verificados en cada petición (tests en `test/chat-sign.test.js`); `Content-Type: application/json` obligatorio y `Sec-Fetch-Site: cross-site` rechazado; `Content-Length` obligatorio y acotado; la generación se aborta si el cliente cierra; `maxRetries: 0` para que el peor caso quepa en `maxDuration`; el widget descarta respuestas sin frame `done`; los logs no incluyen mensajes crudos del proveedor. Verificado con el arnés local (415, 403, 411, 503, 400 firma inválida, 200 firma válida).
 - PENDIENTE — 2026-09-04 (LLM): límite de gasto mensual en la consola de Anthropic. Responsable: Isael. Condición: configurarlo antes de dejar el chat activo en producción.
 - HECHO — 2026-09-04 (LLM): `ANTHROPIC_API_KEY` y `CHAT_SIGNING_SECRET` en Vercel (production y preview). Verificado en el preview: conversación real de dos turnos con streaming y firma válida, historial forjado rechazado con 400. La primera clave se rotó porque pasó por el chat de la sesión.
-- NO APLICA (LLM): temperatura 0 y salida estructurada; el chat es conversacional y no necesita reproducibilidad.
+- NO APLICA (LLM): temperatura 0 y salida estructurada; el chat es conversacional y no necesita reproducibilidad. `fallbacks` y `effort` tampoco aplican en Haiku 4.5.
 - HECHO — 2026-09-04: privacidad y términos actualizados con el asistente (Vercel y Anthropic como encargados, sin persistencia propia, tratamiento de la IP, descargo de respuestas orientativas).
